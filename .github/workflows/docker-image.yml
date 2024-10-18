@@ -25,8 +25,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Construir la imagen de Docker usando el tag de GitHub
-      - name: Build Docker Image
+      # Construir y publicar la imagen de Docker
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
