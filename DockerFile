@@ -1,1 +1,5 @@
-"FROM nginx`nRUN apt update && apt install -y nano`nADD index.html /usr/share/nginx/html/index.html" 
+# Usa la imagen base de Alpine Linux, que es muy ligera
+FROM alpine:3.12
+
+# Comando que se ejecuta cuando el contenedor arranca
+CMD ["echo", "Hello, World!"]
