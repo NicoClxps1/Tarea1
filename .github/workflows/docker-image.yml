@@ -2,27 +2,33 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches:
-      - main  # Esto se ejecuta al hacer push a la rama main
+    tags:
+      - '*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Comprobar el código fuente
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      # Configurar Docker para autenticarse con Docker Hub
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Log in to DockerHub
-      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      # Iniciar sesión en Docker Hub usando la acción oficial de Docker
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/custom_nginx:latest .
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/custom_nginx:latest
-
-    - name: Logout from DockerHub
-      run: docker logout
+      # Construir la imagen de Docker usando el tag de GitHub
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/mi-imagen-docker:${{ github.ref_name }}
